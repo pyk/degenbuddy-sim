@@ -4,7 +4,7 @@ toc: true
 ---
 
 ```js
-import { formatEther } from "npm:viem@2.10.8";
+import { formatEther, parseEther } from "npm:viem@2.10.8";
 ```
 
 # Bonding Curve Simulator
@@ -210,8 +210,6 @@ view(plotPricePerTokenUSD);
 view(plotPricePerTokenETH);
 ```
 
-## Exponential Bonding Curve Visualization
-
 ## Dev
 
 1 wei is equal to:
@@ -219,4 +217,16 @@ view(plotPricePerTokenETH);
 ```js
 const weiPrice = Number(formatEther(1n)) * ethPrice;
 view(`${weiPrice.toFixed(18)} USD`);
+```
+
+Token creation fee:
+
+```js
+const tokenCreationFeeETH = "0.001";
+const tokenCreationFeeWei = parseEther(tokenCreationFeeETH);
+const tokenCreationFeeUSD = Number(tokenCreationFeeETH) * ethPrice;
+
+view(
+  `${tokenCreationFeeWei} Wei (${tokenCreationFeeETH} ETH) (${tokenCreationFeeUSD} USD)`
+);
 ```
