@@ -230,3 +230,11 @@ view(
   `${tokenCreationFeeWei} Wei (${tokenCreationFeeETH} ETH) (${tokenCreationFeeUSD} USD)`
 );
 ```
+
+Trading fee:
+
+```js
+const tradingFeePercent = 5 / 100;
+
+view(`${tradingFeePercent * 100}%`);
+```
