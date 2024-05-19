@@ -46,7 +46,7 @@ Enter the percentage of the total supply that will be sold via the bonding curve
 const bondingCurvePercentage = view(
   Inputs.range([1, 100], {
     step: 1,
-    value: 1,
+    value: 22,
     label: "% Total Supply",
   })
 );
@@ -76,7 +76,7 @@ Parameters:
 ```js
 const bondingCurveDelta = view(
   Inputs.radio([1n, 100n, 1000n, 10000n, 100000n, 200000n], {
-    value: 1n,
+    value: 100n,
     label: "Delta (Wei)",
   })
 );
@@ -237,4 +237,88 @@ Trading fee:
 const tradingFeePercent = 5 / 100;
 
 view(`${tradingFeePercent * 100}%`);
+```
+
+```js
+function getAmountInETH(amountOut, buySpotPrice) {
+  return amountOut * buySpotPrice + (amountOut * (amountOut - 1) * delta) / 2;
+}
+
+function getAmountOutETH(amountIn, sellSpotPrice) {
+  return amountIn * sellSpotPrice - (amountIn * (amountIn - 1) * delta) / 2;
+}
+```
+
+```js
+const amountOut = 10_000_000;
+let spotPriceInETH = 0;
+const buySpotPrice = spotPriceInETH + delta;
+const amountInCurveETH = getAmountInETH(amountOut, buySpotPrice);
+const feeInEth = amountInCurveETH * tradingFeePercent;
+const amountInETH = amountInCurveETH + feeInEth;
+spotPriceInETH = spotPriceInETH + delta * amountOut;
+
+// new states
+const totalReserveInETH = amountInCurveETH;
+const spotPriceInETHAfterFirstBuy = spotPriceInETH;
+
+// Alice sold all tokens
+// const amountIn = 10_000_000;
+// const amountOutCurveInETH = getAmountOutETH(amountIn, spotPriceInETH);
+// const totalPriceDecrease = amountIn * delta;
+// spotPriceInETH = spotPriceInETH - totalPriceDecrease;
+// const spotPriceInETHAfterFirstSell = spotPriceInETH;
+```
+
+Alice buy 10.000.000 TOKEN and need the following ETH amount:
+
+```js
+view("amountInCurve (ETH)");
+view(amountInCurveETH);
+
+view("amountInCurve (USD)");
+view(amountInCurveETH * ethPrice);
+
+view("amountInCurve (wei)");
+view(parseEther(amountInCurveETH.toString()));
+
+view("fee (ETH)");
+view(feeInEth);
+
+view("fee (USD)");
+view(feeInEth * ethPrice);
+
+view("fee (wei)");
+view(parseEther(feeInEth.toString()));
+
+view("amountIn (ETH)");
+view(amountInETH);
+
+view("amountIn (USD)");
+view(amountInETH * ethPrice);
+
+view("amountIn (wei)");
+view(parseEther(amountInETH.toString()));
+```
+
+New states after buy is executed:
+
+```js
+view("newSpotPrice (ETH)");
+view(spotPriceInETHAfterFirstBuy);
+
+view("newSpotPrice (USD)");
+view(spotPriceInETHAfterFirstBuy * ethPrice);
+
+view("newSpotPrice (wei)");
+view(parseEther(spotPriceInETHAfterFirstBuy.toFixed(18)));
+
+view("totalReserve (ETH)");
+view(totalReserveInETH);
+
+view("totalReserve (USD)");
+view(totalReserveInETH * ethPrice);
+
+view("totalReserve (wei)");
+view(parseEther(totalReserveInETH.toFixed(18)));
 ```
