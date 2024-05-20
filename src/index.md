@@ -46,11 +46,19 @@ const maxTotalSupply = view(
 Enter the percentage of the total supply that will be sold via the bonding curve:
 
 ```js
-const bondingCurvePercentage = view(
-  Inputs.range([1, 100], {
-    step: 0.01,
-    value: 23.5,
-    label: "% Total Supply",
+// const bondingCurvePercentage = view(
+//   Inputs.range([1, 100], {
+//     step: 0.01,
+//     value: 23.5,
+//     label: "% Total Supply",
+//   })
+// );
+
+const bondingCurveSupply = view(
+  Inputs.range([1_000_000_000, 2_000_000_000], {
+    step: 10_000,
+    value: 1_000_000_000,
+    label: "Supply Out",
   })
 );
 ```
@@ -58,7 +66,7 @@ const bondingCurvePercentage = view(
 Total supply inside bonding curve:
 
 ```js
-const bondingCurveSupply = (bondingCurvePercentage / 100) * maxTotalSupply;
+// const bondingCurveSupply = (bondingCurvePercentage / 100) * maxTotalSupply;
 view(bondingCurveSupply.toLocaleString() + " TOKEN");
 ```
 
