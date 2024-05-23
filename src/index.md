@@ -598,14 +598,19 @@ view(case2_sqrtPriceX96.toString());
 Define current tick:
 
 ```js
+import { nearestUsableTick } from "npm:@uniswap/v3-sdk@3.11.2";
+
 const case2_currentTick = TickMath.getTickAtSqrtRatio(case2_sqrtPriceX96);
 view(case2_currentTick);
+view(nearestUsableTick(case2_currentTick, 200));
 
 view("min_tick");
 view(TickMath.MIN_TICK);
+view(nearestUsableTick(TickMath.MIN_TICK, 200));
 
 view("max_tick");
 view(TickMath.MAX_TICK);
+view(nearestUsableTick(TickMath.MAX_TICK, 200));
 ```
 
 Define Pool:
