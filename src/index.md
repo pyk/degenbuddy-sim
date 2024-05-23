@@ -471,95 +471,7 @@ const wethAmount = parseEther("2.4");
 const tokenAmount = parseEther(bondingCurveSupply.toString());
 ```
 
-### Case 1: token0=WETH, token1
-
-Define tokens:
-
-```js
-import { Token, WETH9 } from "npm:@uniswap/sdk-core@5.0.0";
-
-const case1_token0 = WETH9[1];
-const case1_token1 = new Token(
-  1,
-  "0xdAC17F958D2ee523a2206206994597C13D831ec7",
-  18,
-  "t1",
-  "token1"
-);
-
-view(case1_token0);
-view(case1_token1);
-```
-
-Define fee tier:
-
-```js
-import { FeeAmount } from "npm:@uniswap/v3-sdk@3.11.2";
-
-const case1_feeTier = FeeAmount.HIGH;
-
-view(case1_feeTier);
-```
-
-Define initial price:
-
-```js
-import { encodeSqrtRatioX96 } from "npm:@uniswap/v3-sdk@3.11.2";
-
-const tokenPriceInWETH = latestCurve.priceETH.toFixed(18);
-const tokenPriceInWei = parseEther(tokenPriceInWETH);
-view("tokenPriceInWei");
-view(tokenPriceInWei);
-const case1_sqrtPriceX96 = encodeSqrtRatioX96(tokenPriceInWei.toString(), 1e18);
-view("sqrtPriceX96");
-view(case1_sqrtPriceX96.toString());
-```
-
-Define current tick:
-
-```js
-import { TickMath } from "npm:@uniswap/v3-sdk@3.11.2";
-
-const case1_currentTick = TickMath.getTickAtSqrtRatio(case1_sqrtPriceX96);
-view(case1_currentTick);
-
-view("min_tick");
-view(TickMath.MIN_TICK);
-
-view("max_tick");
-view(TickMath.MAX_TICK);
-```
-
-Define Pool:
-
-```js
-import { Pool } from "npm:@uniswap/v3-sdk@3.11.2";
-
-const case1_pool = new Pool(
-  case1_token0,
-  case1_token1,
-  case1_feeTier,
-  case1_sqrtPriceX96,
-  0, // liquidity doesn't matter
-  case1_currentTick,
-  []
-);
-view(case1_pool);
-```
-
-Validate pool:
-
-```js
-// Returns the current mid price of the pool in terms of token0
-view("token0Price");
-view(case1_pool.token0Price.toFixed(18));
-
-// Returns the current mid price of the pool in terms of token1
-view("token1Price");
-view(case1_pool.token1Price.toFixed(18));
-```
-
-### Case 2: token0, token1=WETH
+### token0
 
 Define tokens:
 
@@ -598,6 +510,7 @@ view(case2_sqrtPriceX96.toString());
 Define current tick:
 
 ```js
+import { TickMath } from "npm:@uniswap/v3-sdk@3.11.2";
 import { nearestUsableTick } from "npm:@uniswap/v3-sdk@3.11.2";
 
 const case2_currentTick = TickMath.getTickAtSqrtRatio(case2_sqrtPriceX96);
@@ -638,51 +551,94 @@ view("token1Price");
 view(case2_pool.token1Price.toFixed(18));
 ```
 
-## DEBUG
+### token1
 
-Define Tokens:
+Define tokens:
 
 ```js
 import { Token, WETH9 } from "npm:@uniswap/sdk-core@5.0.0";
 
-const case3_token0 = new Token(
+const case1_token0 = WETH9[1];
+const case1_token1 = new Token(
   1,
-  "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
-  6,
-  "USD Coin",
-  "USDC"
+  "0xdAC17F958D2ee523a2206206994597C13D831ec7",
+  18,
+  "t1",
+  "token1"
 );
-const case3_token1 = WETH9[1];
 
-view(case3_token0);
-view(case3_token1);
+view(case1_token0);
+view(case1_token1);
+```
+
+Define fee tier:
+
+```js
+import { FeeAmount } from "npm:@uniswap/v3-sdk@3.11.2";
+
+const case1_feeTier = FeeAmount.HIGH;
+
+view(case1_feeTier);
+```
+
+Define initial price:
+
+```js
+import { encodeSqrtRatioX96 } from "npm:@uniswap/v3-sdk@3.11.2";
+
+const tokenPriceInWETH = latestCurve.priceETH.toFixed(18);
+const tokenPriceInWei = parseEther(tokenPriceInWETH);
+view("tokenPriceInWei");
+view(tokenPriceInWei);
+const case1_sqrtPriceX96 = encodeSqrtRatioX96(1e18, tokenPriceInWei.toString());
+view("sqrtPriceX96");
+view(case1_sqrtPriceX96.toString());
+```
+
+Define current tick:
+
+```js
+import { TickMath } from "npm:@uniswap/v3-sdk@3.11.2";
+import { nearestUsableTick } from "npm:@uniswap/v3-sdk@3.11.2";
+
+const case1_currentTick = TickMath.getTickAtSqrtRatio(case1_sqrtPriceX96);
+view(case1_currentTick);
+view(nearestUsableTick(case1_currentTick, 200));
+
+view("min_tick");
+view(TickMath.MIN_TICK);
+view(nearestUsableTick(TickMath.MIN_TICK, 200));
+
+view("max_tick");
+view(TickMath.MAX_TICK);
+view(nearestUsableTick(TickMath.MAX_TICK, 200));
 ```
 
 Define Pool:
 
 ```js
-const case3_feeTier = 500;
-const case3_sqrtPriceX96 = 1350174849792634181862360983626536;
+import { Pool } from "npm:@uniswap/v3-sdk@3.11.2";
 
-const case3_currentTick = 194878;
-const case3_pool = new Pool(
-  case3_token0,
-  case3_token1,
-  case3_feeTier,
-  case3_sqrtPriceX96,
+const case1_pool = new Pool(
+  case1_token0,
+  case1_token1,
+  case1_feeTier,
+  case1_sqrtPriceX96,
   0, // liquidity doesn't matter
-  case3_currentTick,
+  case1_currentTick,
   []
 );
-view(case3_pool);
+view(case1_pool);
 ```
 
 Validate pool:
 
 ```js
+// Returns the current mid price of the pool in terms of token0
 view("token0Price");
-view(case3_pool.token0Price.toFixed(6));
+view(case1_pool.token0Price.toFixed(18));
 
+// Returns the current mid price of the pool in terms of token1
 view("token1Price");
-view(case3_pool.token1Price.toFixed(18));
+view(case1_pool.token1Price.toFixed(18));
 ```

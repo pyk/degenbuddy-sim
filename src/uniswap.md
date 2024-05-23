@@ -1001,21 +1001,102 @@ const IUniswapV3PoolABI = {
   linkReferences: {},
   deployedLinkReferences: {},
 };
+```
 
+Initialize provider.
+
+```js
 const provider = new ethers.providers.JsonRpcProvider(
   "https://ethereum-rpc.publicnode.com"
 );
+view(provider);
+```
+
+Get latest block number from ethereum mainnet:
+
+```js
 const blockNumber = await provider.getBlockNumber();
 view(blockNumber);
+```
 
-const poolAddress = "0x88e6a0c2ddd26feeb64f039a2c41296fcb3f5640";
+## token0 case
+
+Here we are trying to understand what is the behaviour of the pool if token is on token0 and WETH on token1.
+
+We learn from USDC/WETH pool:
+
+```js
+const usdcwethPool = "0x88e6a0c2ddd26feeb64f039a2c41296fcb3f5640";
+
+const usdcPool = new ethers.Contract(
+  usdcwethPool,
+  IUniswapV3PoolABI.abi,
+  provider
+);
+view(usdcPool);
+```
+
+Then get the token price:
+
+```js
+const [usdcLiquidity, usdcSlot0] = await Promise.all([
+  usdcPool.liquidity(),
+  usdcPool.slot0(),
+]);
+
+import { Token, WETH9 } from "npm:@uniswap/sdk-core@5.0.0";
+
+const usdcToken0 = new Token(
+  1,
+  "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+  6,
+  "USD Coin",
+  "USDC"
+);
+const usdcToken1 = WETH9[1];
+
+const configuredUsdcPool = new Pool(
+  usdcToken0,
+  usdcToken1,
+  500,
+  usdcSlot0.sqrtPriceX96.toString(),
+  usdcLiquidity.toString(),
+  usdcSlot0.tick
+);
+
+view("pool");
+view(configuredUsdcPool);
+
+view("sqrtRatioX96");
+view(configuredUsdcPool.sqrtRatioX96.toString());
+
+view("token0Price");
+view(configuredUsdcPool.token0Price.toFixed(18));
+
+view("token1Price");
+view(configuredUsdcPool.token1Price.toFixed(18));
+```
+
+## token1 case
+
+Here we are trying to understand what is the behaviour of the pool if token is on token1 and WETH on token0.
+
+We learn from WETH/USDT pool:
+
+```js
+const poolAddress = "0x4e68ccd3e89f51c3074ca5072bbac773960dfa36";
 
 const poolContract = new ethers.Contract(
   poolAddress,
   IUniswapV3PoolABI.abi,
   provider
 );
+view(poolContract);
+```
 
+Then get the token price:
+
+```js
 const [liquidity, slot0] = await Promise.all([
   poolContract.liquidity(),
   poolContract.slot0(),
@@ -1023,14 +1104,14 @@ const [liquidity, slot0] = await Promise.all([
 
 import { Token, WETH9 } from "npm:@uniswap/sdk-core@5.0.0";
 
-const token0 = new Token(
+const token1 = new Token(
   1,
-  "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+  "0xdAC17F958D2ee523a2206206994597C13D831ec7",
   6,
-  "USD Coin",
-  "USDC"
+  "Tether USD",
+  "USDT"
 );
-const token1 = WETH9[1];
+const token0 = WETH9[1];
 
 const configuredPool = new Pool(
   token0,
@@ -1041,7 +1122,12 @@ const configuredPool = new Pool(
   slot0.tick
 );
 
+view("pool");
 view(configuredPool);
+
+view("sqrtRatioX96");
+view(configuredPool.sqrtRatioX96.toString());
+
 view("token0Price");
 view(configuredPool.token0Price.toFixed(18));
 
