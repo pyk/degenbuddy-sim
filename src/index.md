@@ -590,7 +590,7 @@ view(case2_feeTier);
 Define initial price:
 
 ```js
-const case2_sqrtPriceX96 = encodeSqrtRatioX96(1e18, tokenPriceInWei.toString());
+const case2_sqrtPriceX96 = encodeSqrtRatioX96(tokenPriceInWei.toString(), 1e18);
 view("sqrtPriceX96");
 view(case2_sqrtPriceX96.toString());
 ```
@@ -631,4 +631,53 @@ view(case2_pool.token0Price.toFixed(18));
 
 view("token1Price");
 view(case2_pool.token1Price.toFixed(18));
+```
+
+## DEBUG
+
+Define Tokens:
+
+```js
+import { Token, WETH9 } from "npm:@uniswap/sdk-core@5.0.0";
+
+const case3_token0 = new Token(
+  1,
+  "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+  6,
+  "USD Coin",
+  "USDC"
+);
+const case3_token1 = WETH9[1];
+
+view(case3_token0);
+view(case3_token1);
+```
+
+Define Pool:
+
+```js
+const case3_feeTier = 500;
+const case3_sqrtPriceX96 = 1350174849792634181862360983626536;
+
+const case3_currentTick = 194878;
+const case3_pool = new Pool(
+  case3_token0,
+  case3_token1,
+  case3_feeTier,
+  case3_sqrtPriceX96,
+  0, // liquidity doesn't matter
+  case3_currentTick,
+  []
+);
+view(case3_pool);
+```
+
+Validate pool:
+
+```js
+view("token0Price");
+view(case3_pool.token0Price.toFixed(6));
+
+view("token1Price");
+view(case3_pool.token1Price.toFixed(18));
 ```
